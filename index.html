@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics Formula App</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        #formulaList { list-style-type: none; padding: 0; }
+        #formulaList li { cursor: pointer; padding: 10px; border: 1px solid #ddd; margin-bottom: 5px; }
+        #formulaList li:hover { background-color: #f0f0f0; }
+        #formulaDetails { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Statistics Formula App</h1>
+    <input type="text" id="searchInput" placeholder="Search formulas...">
+    <button onclick="searchFormulas()">Search</button>
+    <ul id="formulaList"></ul>
+    <div id="formulaDetails"></div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000';
+
+        // Fetch and display all formulas
+        async function fetchFormulas() {
+            const response = await fetch(`${API_URL}/formulas`);
+            const formulas = await response.json();
+            const formulaList = document.getElementById('formulaList');
+            formulaList.innerHTML = formulas.map(formula => 
+                `<li onclick="fetchFormulaDetails(${formula.id})">${formula.name}</li>`
+            ).join('');
+        }
+
+        // Fetch and display details for a specific formula
+        async function fetchFormulaDetails(id) {
+            const response = await fetch(`${API_URL}/formula/${id}`);
+            const formula = await response.json();
+            const detailsDiv = document.getElementById('formulaDetails');
+            detailsDiv.innerHTML = `
+                <h2>${formula.formula_name}</h2>
+                <p><strong>Formula:</strong> ${formula.formula}</p>
+                <p><strong>Explanation:</strong> ${formula.explanation}</p>
+                <p><strong>Importance:</strong> ${formula.importance}</p>
+                <p><strong>Usage:</strong> ${formula.usage}</p>
+            `;
+        }
+
+        // Search formulas
+        async function searchFormulas() {
+            const query = document.getElementById('searchInput').value;
+            const response = await fetch(`${API_URL}/search?query=${encodeURIComponent(query)}`);
+            const formulas = await response.json();
+            const formulaList = document.getElementById('formulaList');
+            formulaList.innerHTML = formulas.map(formula => 
+                `<li onclick="fetchFormulaDetails(${formulas.indexOf(formula)})">${formula.formula_name}</li>`
+            ).join('');
+        }
+
+        // Initial load of formulas
+        fetchFormulas();
+    </script>
+</body>
+</html>

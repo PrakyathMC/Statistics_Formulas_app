@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics Formula App</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #3f51b5;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        nav button {
+            margin: 0 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #3f51b5;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        nav button:hover {
+            background-color: #303f9f;
+        }
+        #searchInput {
+            width: 70%;
+            padding: 0.5rem;
+            margin-right: 0.5rem;
+        }
+        #formulaList {
+            list-style-type: none;
+            padding: 0;
+        }
+        #formulaList li {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+            background-color: white;
+            transition: background-color 0.3s;
+        }
+        #formulaList li:hover {
+            background-color: #e0e0e0;
+        }
+        #formulaDetails, #dailyFormula, #quizQuestion, #quizOptions, #quizResult {
+            background-color: white;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #3f51b5;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Statistics Formula App</h1>
+    </header>
+    <nav>
+        <button onclick="showSection('home')">Home</button>
+        <button onclick="showSection('formulaOfDay')">Formula of the Day</button>
+        <button onclick="showSection('quiz')">Quiz</button>
+    </nav>
+    <main>
+        <section id="home">
+            <input type="text" id="searchInput" placeholder="Search formulas...">
+            <button onclick="searchFormulas()">Search</button>
+            <ul id="formulaList"></ul>
+            <div id="formulaDetails"></div>
+        </section>
+        <section id="formulaOfDay" style="display:none;">
+            <h2>Formula of the Day</h2>
+            <div id="dailyFormula"></div>
+        </section>
+        <section id="quiz" style="display:none;">
+            <h2>Quiz</h2>
+            <div id="quizQuestion"></div>
+            <div id="quizOptions"></div>
+            <button onclick="checkAnswer()">Submit Answer</button>
+            <div id="quizResult"></div>
+        </section>
+    </main>
+    <footer>
+        <p>© 2024 Statistics Formula App</p>
+    </footer>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000';
+        let allFormulas = [];
+
+        async function fetchFormulas() {
+            const response = await fetch(`${API_URL}/formulas`);
+            allFormulas = await response.json();
+            displayFormulas(allFormulas);
+        }
+
+        function displayFormulas(formulas) {
+            const formulaList = document.getElementById('formulaList');
+            formulaList.innerHTML = formulas.map(formula => 
+                `<li onclick="fetchFormulaDetails(${formula.id})">${formula.name}</li>`
+            ).join('');
+        }
+
+        async function fetchFormulaDetails(id) {
+            const response = await fetch(`${API_URL}/formula/${id}`);
+            const formula = await response.json();
+            const detailsDiv = document.getElementById('formulaDetails');
+            detailsDiv.innerHTML = `
+                <h2>${formula.formula_name}</h2>
+                <p><strong>Formula:</strong> ${formula.formula}</p>
+                <p><strong>Explanation:</strong> ${formula.explanation}</p>
+                <p><strong>Importance:</strong> ${formula.importance}</p>
+                <p><strong>Usage:</strong> ${formula.usage}</p>
+            `;
+        }
+
+        async function searchFormulas() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filteredFormulas = allFormulas.filter(formula => 
+                formula.name.toLowerCase().includes(query)
+            );
+            displayFormulas(filteredFormulas);
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('main > section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+            if (sectionId === 'formulaOfDay') {
+                showFormulaOfDay();
+            } else if (sectionId === 'quiz') {
+                startQuiz();
+            }
+        }
+
+        function showFormulaOfDay() {
+            const randomIndex = Math.floor(Math.random() * allFormulas.length);
+            fetchFormulaDetails(randomIndex);
+            document.getElementById('dailyFormula').innerHTML = document.getElementById('formulaDetails').innerHTML;
+        }
+
+        let currentQuiz = null;
+
+        function startQuiz() {
+            const randomIndex = Math.floor(Math.random() * allFormulas.length);
+            currentQuiz = allFormulas[randomIndex];
+            document.getElementById('quizQuestion').innerHTML = `What is the formula for ${currentQuiz.name}?`;
+            const options = [currentQuiz.formula];
+            while (options.length < 4) {
+                const randomFormula = allFormulas[Math.floor(Math.random() * allFormulas.length)].formula;
+                if (!options.includes(randomFormula)) {
+                    options.push(randomFormula);
+                }
+            }
+            shuffleArray(options);
+            document.getElementById('quizOptions').innerHTML = options.map((option, index) => 
+                `<label><input type="radio" name="quizOption" value="${option}"> ${option}</label><br>`
+            ).join('');
+            document.getElementById('quizResult').innerHTML = '';
+        }
+
+        function checkAnswer() {
+            const selectedOption = document.querySelector('input[name="quizOption"]:checked');
+            if (selectedOption) {
+                const isCorrect = selectedOption.value === currentQuiz.formula;
+                document.getElementById('quizResult').innerHTML = isCorrect ? 
+                    '<p style="color: green;">Correct!</p>' : 
+                    `<p style="color: red;">Incorrect. The correct formula is: ${currentQuiz.formula}</p>`;
+            } else {
+                document.getElementById('quizResult').innerHTML = '<p style="color: orange;">Please select an answer.</p>';
+            }
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Initial load of formulas
+        fetchFormulas();
+    </script>
+</body>
+</html>

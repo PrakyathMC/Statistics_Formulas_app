@@ -1,0 +1,65 @@
+[
+  {
+    "formula_name": "Standard Deviation",
+    "formula": "\u03c3 = \u221a(\u03a3(x - \u03bc)\u00b2 / N)",
+    "explanation": "Measures the amount of variation or dispersion of a set of values",
+    "importance": "Crucial in understanding data spread in statistics and machine learning",
+    "usage": "Used in data preprocessing, outlier detection, and model evaluation"
+  },
+  {
+    "formula_name": "Variance",
+    "formula": "\u03c3\u00b2 = \u03a3(x - \u03bc)\u00b2 / n",
+    "explanation": "Average of squared deviations from the mean",
+    "importance": "Measures spread of data, crucial for understanding data distribution",
+    "usage": "Feature scaling, outlier detection, and in many statistical tests"
+  },
+  {
+    "formula_name": "Correlation Coefficient",
+    "formula": "r = \u03a3((x - \u03bcx)(y - \u03bcy)) / (n\u03c3x\u03c3y)",
+    "explanation": "Measures the strength and direction of relationship between two variables",
+    "importance": "Essential for understanding feature relationships in datasets",
+    "usage": "Feature selection, multicollinearity detection in regression"
+  },
+  {
+    "formula_name": "Bayes' Theorem",
+    "formula": "P(A|B) = (P(B|A) * P(A)) / P(B)",
+    "explanation": "Calculates conditional probability based on prior knowledge",
+    "importance": "Foundational in probabilistic machine learning and AI",
+    "usage": "Naive Bayes classifiers, Bayesian networks, spam filtering"
+  },
+  {
+    "formula_name": "Entropy",
+    "formula": "H(X) = -\u03a3 P(xi) log\u2082 P(xi)",
+    "explanation": "Measures the average amount of information in a random variable",
+    "importance": "Key concept in information theory and machine learning",
+    "usage": "Decision trees, feature selection, natural language processing"
+  },
+  {
+    "formula_name": "Logistic Function",
+    "formula": "f(x) = 1 / (1 + e^(-x))",
+    "explanation": "S-shaped curve that maps any input to a value between 0 and 1",
+    "importance": "Core component of logistic regression and neural networks",
+    "usage": "Binary classification, multi-class classification, neural network activation"
+  },
+  {
+    "formula_name": "Gradient Descent Update",
+    "formula": "\u03b8j := \u03b8j - \u03b1 * \u2202J/\u2202\u03b8j",
+    "explanation": "Iterative optimization algorithm for finding local minimum",
+    "importance": "Fundamental in training many machine learning models",
+    "usage": "Optimizing loss functions in neural networks, linear regression, etc."
+  },
+  {
+    "formula_name": "TF-IDF",
+    "formula": "TF-IDF = TF(t,d) * log(N/DF(t))",
+    "explanation": "Measures importance of a word in a document within a collection",
+    "importance": "Key in text analysis and information retrieval",
+    "usage": "Document classification, search engines, text summarization"
+  },
+  {
+    "formula_name": "L2 Regularization",
+    "formula": "J(\u03b8) + \u03bb\u03a3\u03b8j\u00b2",
+    "explanation": "Adds penalty term to loss function based on parameter magnitude",
+    "importance": "Helps prevent overfitting in machine learning models",
+    "usage": "Ridge regression, weight decay in neural networks"
+  }
+]
